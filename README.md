@@ -2,13 +2,13 @@
 
 An interactive, production-ready **Machine Learning Web Application** built with **Streamlit** to detect fraudulent credit card transactions in real-time based on transformed PCA features and transaction metrics.
 
-[![Live App](https://img.shields.io/badge/Streamlit-Live%20Demo-FF4B4B?style=for-the-badge&logo=streamlit)](YOUR_LIVE_APP_LINK_HERE)
+[![Live App](https://img.shields.io/badge/Streamlit-Live%20Demo-FF4B4B?style=for-the-badge&logo=streamlit)](https://credit-card-fraud-detection-system-md3f6bhxwpbrhz8ogcylwu.streamlit.app/)
 
 ---
 
 ## 🖼️ Application Preview & UI
 
-![Credit Card Fraud Detection UI](YOUR_IMAGE_PATH_OR_URL_HERE)
+![Credit Card Fraud Detection UI](UI.png)
 
 > _Interactive Streamlit dashboard designed with business-friendly feature inputs, fault-tolerant logic, and instant fraud probability metrics._
 
@@ -17,7 +17,7 @@ An interactive, production-ready **Machine Learning Web Application** built with
 ## 🔗 Live Application
 
 You can access and test the deployed application directly here:
-👉 **[Click Here to Launch Live Demo](YOUR_LIVE_APP_LINK_HERE)**
+👉 **[Click Here to Launch Live Demo](https://credit-card-fraud-detection-system-md3f6bhxwpbrhz8ogcylwu.streamlit.app/)**
 
 ---
 

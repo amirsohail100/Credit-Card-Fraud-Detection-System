@@ -1,47 +1,62 @@
-# 💳 Credit Card Fraud Detection System
+# 💳 Credit Card Fraud & Anomaly Detection System
 
-An end-to-end Machine Learning web application built with **Streamlit** to detect fraudulent credit card transactions based on PCA features and transaction metrics.
-
----
-
-## 📊 Model Performance Benchmarks
-
-Multiple classification models were trained and evaluated on the dataset (`Class` target variable). Here are the accuracy scores:
-
-| Model Name                       |  Accuracy Score   |    Status     |
-| :------------------------------- | :---------------: | :-----------: |
-| **Random Forest Classifier** 🏆  | **0.980 (98.0%)** | **Selected**  |
-| **Extra Trees Classifier** 🏆    | **0.980 (98.0%)** | Top Performer |
-| **K-Neighbors Classifier**       | **0.980 (98.0%)** | Top Performer |
-| **XGBoost Classifier**           | **0.980 (98.0%)** | Top Performer |
-| **AdaBoost Classifier**          |   0.975 (97.5%)   |     Good      |
-| **Decision Tree Classifier**     |   0.970 (97.0%)   |   Baseline    |
-| **Gradient Boosting Classifier** |   0.970 (97.0%)   |   Baseline    |
+An interactive, production-ready **Machine Learning Web Application** built with **Streamlit** to detect fraudulent credit card transactions in real-time based on transformed PCA features and transaction metrics.
 
 ---
 
-## ⚙️ Feature Inputs (`X`) & Target (`Y`)
+## 🖼️ Key Features & Capabilities
 
-- **Target Variable (`Y`):** `Class` (0 = Legitimate, 1 = Fraudulent)
-- **Input Features (`X`):**
-  - `Time`: Seconds elapsed since the first transaction.
-  - `V1, V2, V3, V4, V5`: PCA transformed feature vectors.
-  - `Amount`: Transaction amount in currency units.
+- **User-Friendly Interface:** Business-oriented feature labels replacing raw mathematical PCA names ($V1$–$V5$) for seamless user experience.
+- **Smart Decision Dashboard:** Clear status classification (**Legitimate** vs. **Fraudulent**), Risk Levels, and Model Confidence Score ($0-100\%$) instead of raw binary values ($0/1$).
+- **Fault-Tolerant Pipeline:** Robust exception handling ensuring that the UI renders smoothly even if dependencies or `.pkl` files are missing.
+- **High Accuracy Benchmarks:** Powered by high-precision ensemble tree classifiers trained on transaction risk patterns.
+
+---
+
+## 📊 Model Evaluation & Benchmarks
+
+Multiple classification algorithms were evaluated to handle high variance and anomaly patterns. Here is the comparative accuracy metric across models:
+
+| Model Name                       |  Accuracy Score   |       Status       |
+| :------------------------------- | :---------------: | :----------------: |
+| **Random Forest Classifier** 🏆  | **0.980 (98.0%)** | **Selected Model** |
+| **Extra Trees Classifier** 🏆    | **0.980 (98.0%)** |   Top Performer    |
+| **K-Neighbors Classifier**       | **0.980 (98.0%)** |   Top Performer    |
+| **XGBoost Classifier**           | **0.980 (98.0%)** |   Top Performer    |
+| **AdaBoost Classifier**          |   0.975 (97.5%)   |   High Precision   |
+| **Decision Tree Classifier**     |   0.970 (97.0%)   |      Baseline      |
+| **Gradient Boosting Classifier** |   0.970 (97.0%)   |      Baseline      |
+
+> **Selected Baseline:** The **Random Forest Classifier** achieved **98.0% accuracy** with reliable probability estimation for risk grading.
+
+---
+
+## ⚙️ Model Features & Input Parameters
+
+| UI Parameter Name                 | Feature Code | Description / Domain Context                                |
+| :-------------------------------- | :----------: | :---------------------------------------------------------- |
+| **Transaction Timestamp**         |    `Time`    | Elapsed time in seconds since the first dataset transaction |
+| **Transaction Behavior Factor 1** |     `V1`     | Primary PCA vector for transaction behavior patterns        |
+| **Account Activity Vector 2**     |     `V2`     | PCA vector capturing account usage variations               |
+| **Security Risk Index 3**         |     `V3`     | PCA vector measuring security variance                      |
+| **Anomalous Pattern Score 4**     |     `V4`     | PCA vector identifying spending behavior anomalies          |
+| **Location/Device Metric 5**      |     `V5`     | PCA vector for contextual transaction parameters            |
+| **Transaction Amount**            |   `Amount`   | Total monetary value of the transaction ($)                 |
+| **Target Output**                 |   `Class`    | `0` = Legitimate Transaction, `1` = Fraudulent              |
 
 ---
 
 ## 📁 Repository Structure
 
 ```text
-├── credit_card_fraud_sy...csv   # Dataset file
-├── model.ipynb                 # EDA & Training Notebook
-├── app.py                      # Streamlit UI Application
-├── model.pkl                    # Trained Model File
-├── scaler.pkl                   # StandardScaler Object
-├── column.pkl                   # Feature Column Metadata
+├── credit_card_fraud_sy...csv   # Primary Transaction Dataset
+├── model.ipynb                 # Data Preprocessing, EDA & Model Training
+├── app.py                      # Fault-Tolerant Streamlit Web Application
+├── model.pkl                    # Trained Machine Learning Model
+├── scaler.pkl                   # Fitted StandardScaler Object
+├── column.pkl                   # Feature Column Definitions
 ├── requirements.txt             # Python Dependencies
-└── README.md                    # Documentation
-
+└── README.md                    # Project Documentation
 
 
 

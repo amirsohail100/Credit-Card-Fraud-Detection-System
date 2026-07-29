@@ -112,30 +112,55 @@ with st.form("credit_card_fraud_form"):
     
     with col1:
         time_val = st.number_input(
-            "Transaction Time (Seconds)", 
+            "Transaction Timestamp (Seconds)", 
             min_value=0.0, 
             value=121958.0, 
             step=100.0,
-            help="Elapsed time in seconds since the first recorded transaction"
+            help="Elapsed time in seconds since the first recorded transaction in the system."
         )
-        v1 = st.number_input("V1 Feature", value=-2.289061, format="%.6f")
-        v2 = st.number_input("V2 Feature", value=-1.313758, format="%.6f")
-        v3 = st.number_input("V3 Feature", value=-0.452562, format="%.6f")
+        # Displaying meaningful label to user, assigning to 'v1' for model
+        v1 = st.number_input(
+            "Transaction Behavior Factor 1 (V1)", 
+            value=-2.289061, 
+            format="%.6f",
+            help="PCA component representing core transaction behavior analysis."
+        )
+        v2 = st.number_input(
+            "Account Activity Vector 2 (V2)", 
+            value=-1.313758, 
+            format="%.6f",
+            help="PCA component capturing account usage and transaction patterns."
+        )
+        v3 = st.number_input(
+            "Security Risk Index 3 (V3)", 
+            value=-0.452562, 
+            format="%.6f",
+            help="PCA component measuring transaction security variance."
+        )
 
     with col2:
-        v4 = st.number_input("V4 Feature", value=-0.392802, format="%.6f")
-        v5 = st.number_input("V5 Feature", value=0.224787, format="%.6f")
+        v4 = st.number_input(
+            "Anomalous Pattern Score 4 (V4)", 
+            value=-0.392802, 
+            format="%.6f",
+            help="PCA component identifying deviation from normal spending behavior."
+        )
+        v5 = st.number_input(
+            "Location/Device Metric 5 (V5)", 
+            value=0.224787, 
+            format="%.6f",
+            help="PCA component evaluating contextual transaction parameters."
+        )
         amount = st.number_input(
             "Transaction Amount ($)", 
             min_value=0.0, 
             value=1600.89, 
             step=10.0,
-            help="Total monetary value of the transaction"
+            help="Total monetary value of the transaction."
         )
 
     st.markdown("<br>", unsafe_allow_html=True)
     submit_btn = st.form_submit_button("🔍 Detect Fraudulent Activity", type="primary", use_container_width=True)
-
 # --- 6. PREDICTION & INFERENCE EXECUTION ---
 if submit_btn:
     # Check if dependencies are missing

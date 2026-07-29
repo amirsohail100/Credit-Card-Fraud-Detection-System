@@ -66,14 +66,16 @@ Multiple classification algorithms were evaluated to handle high variance and an
 ## 📁 Repository Structure
 
 ```text
-├── credit_card_fraud_sy...csv   # Primary Transaction Dataset
-├── model.ipynb                 # Data Preprocessing, EDA & Model Training
-├── app.py                      # Fault-Tolerant Streamlit Web Application
-├── model.pkl                    # Trained Machine Learning Model
-├── scaler.pkl                   # Fitted StandardScaler Object
-├── column.pkl                   # Feature Column Definitions
-├── requirements.txt             # Python Dependencies
-└── README.md                    # Project Documentation
+├── credit_card_fraud_synthetic.csv     # Primary Transaction Dataset
+├── model.ipynb                         # Data Preprocessing, EDA & Model Training
+├── .gitignore                          # Git Ignore Rules
+├── .gitattributes                      # Git LFS Configuration
+├── app.py                              # Fault-Tolerant Streamlit Web Application
+├── model.pkl                           # Trained Machine Learning Model
+├── scaler.pkl                          # Fitted StandardScaler Object
+├── column.pkl                          # Feature Column Definitions
+├── requirements.txt                    # Python Dependencies
+└── README.md                           # Project Documentation
 
 
 

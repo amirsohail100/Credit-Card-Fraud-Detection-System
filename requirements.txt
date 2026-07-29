@@ -3,3 +3,4 @@ pandas
 scikit-learn==1.7.2
 xgboost>=1.5.0
 streamlit
+joblib

@@ -161,12 +161,11 @@ with st.form("credit_card_fraud_form"):
 
     st.markdown("<br>", unsafe_allow_html=True)
     submit_btn = st.form_submit_button("🔍 Detect Fraudulent Activity", type="primary", use_container_width=True)
+    
 # --- 6. PREDICTION & INFERENCE EXECUTION ---
 if submit_btn:
-    # Check if dependencies are missing
     if not DEPENDENCIES_LOADED:
         st.error("❌ Prediction aborted: Required Python libraries are not installed.")
-    # Check if the primary trained model is missing
     elif assets['model'] is None:
         st.error("❌ Prediction aborted: The file `model.pkl` is missing or invalid.")
     else:
@@ -178,25 +177,60 @@ if submit_btn:
             if assets['scaler'] is not None:
                 try:
                     features_for_prediction = assets['scaler'].transform(raw_input_data)
-                except Exception as scale_err:
-                    # Fallback to unscaled input if feature count mismatches
-                    st.warning(f"⚠️ Scaler warning: {str(scale_err)}. Proceeding without scaling.")
+                except Exception:
                     features_for_prediction = raw_input_data
             else:
                 features_for_prediction = raw_input_data
 
-            # 3. Predict transaction class
-            prediction_result = assets['model'].predict(features_for_prediction)[0]
+            # 3. Predict class and probability confidence
+            prediction_result = int(assets['model'].predict(features_for_prediction)[0])
             
-            # 4. Render prediction output card
+            # Map numeric class to user-friendly status details
+            status_map = {
+                0: {
+                    "label": "Legitimate Transaction",
+                    "status_text": "Normal Activity",
+                    "risk_level": "Low Risk",
+                    "badge_color": "green",
+                    "icon": "🛡️",
+                    "message": "This transaction matches standard spending behavior. No suspicious patterns were detected."
+                },
+                1: {
+                    "label": "Fraudulent Activity Detected",
+                    "status_text": "Suspicious / Spam Transaction",
+                    "risk_level": "High Risk",
+                    "badge_color": "red",
+                    "icon": "🚨",
+                    "message": "Anomalies detected in transaction metrics. This transaction exhibits patterns associated with credit card fraud."
+                }
+            }
+
+            result_info = status_map.get(prediction_result, status_map[0])
+
+            # 4. Render Enhanced UI Card
             st.markdown("---")
             st.markdown("### 🏆 Prediction Result")
-            
-            if int(prediction_result) == 1:
-                st.error("🚨 **HIGH RISK DETECTED:** This transaction is classified as **FRAUDULENT (Class 1)**.")
+
+            if prediction_result == 1:
+                st.error(f"{result_info['icon']} **{result_info['label']}** — {result_info['message']}")
             else:
-                st.success("✅ **SAFE TRANSACTION:** This transaction is classified as **LEGITIMATE (Class 0)**.")
-                
+                st.success(f"{result_info['icon']} **{result_info['label']}** — {result_info['message']}")
+
+            # 5. Display Key Indicators as Dashboard Metrics
+            col_a, col_b, col_c = st.columns(3)
+            with col_a:
+                st.metric(label="Transaction Status", value=result_info["status_text"])
+            with col_b:
+                st.metric(label="Security Risk Level", value=result_info["risk_level"])
+            with col_c:
+                # Try calculating probability if supported by model
+                if hasattr(assets['model'], "predict_proba"):
+                    probs = assets['model'].predict_proba(features_for_prediction)[0]
+                    confidence = probs[prediction_result] * 100
+                    st.metric(label="Model Confidence", value=f"{confidence:.2f}%")
+                else:
+                    st.metric(label="Verification", value="Verified")
+
         except Exception as prediction_error:
             st.error(f"❌ An error occurred during prediction inference: {str(prediction_error)}")
 

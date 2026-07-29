@@ -1,107 +1,180 @@
 import streamlit as st
 
-# --- PAGE CONFIG ---
+# --- 1. PAGE CONFIGURATION (Always Renders First) ---
 st.set_page_config(
     page_title="Credit Card Fraud Detector",
     page_icon="💳",
     layout="centered"
 )
 
-# --- SAFE IMPORTS ---
+# --- 2. SAFE DEPENDENCY CHECK & IMPORTS ---
 DEPENDENCIES_LOADED = True
-IMPORT_ERR_MSG = ""
+MISSING_IMPORT_MSG = ""
 
 try:
     import numpy as np
     import pandas as pd
     import joblib
-except ImportError as e:
+except ImportError as err:
     DEPENDENCIES_LOADED = False
-    IMPORT_ERR_MSG = str(e)
+    MISSING_IMPORT_MSG = str(err)
 
-# --- UI STYLING ---
+# --- 3. CUSTOM UI STYLING ---
 st.markdown("""
     <style>
-    .main-title { font-family: 'Inter', sans-serif; color: #1E293B; font-weight: 800; text-align: center; }
-    .subtitle { color: #64748B; text-align: center; font-size: 15px; margin-bottom: 25px; }
+    .main-title { 
+        font-family: 'Inter', sans-serif; 
+        color: #1E293B; 
+        font-weight: 800; 
+        text-align: center; 
+        margin-bottom: 5px;
+    }
+    .subtitle { 
+        color: #64748B; 
+        text-align: center; 
+        font-size: 15px; 
+        margin-bottom: 25px; 
+    }
+    .stButton>button {
+        border-radius: 8px;
+        height: 48px;
+        font-weight: 600;
+    }
     </style>
 """, unsafe_allow_html=True)
 
+# Main Title and Subtitle Header
 st.markdown("<h1 class='main-title'>💳 Credit Card Fraud Detection</h1>", unsafe_allow_html=True)
 st.markdown("<p class='subtitle'>Predict fraudulent transactions using PCA features & transaction metrics</p>", unsafe_allow_html=True)
 
+# Display Dependency Error Message if Imports Failed
 if not DEPENDENCIES_LOADED:
-    st.error(f"⚠️ **Missing Dependencies:** {IMPORT_ERR_MSG}")
-    st.info("💡 Run: `pip install streamlit scikit-learn numpy pandas joblib`")
+    st.error(f"⚠️ **Missing Dependencies Detected:** {MISSING_IMPORT_MSG}")
+    st.info("💡 Please install missing dependencies using: `pip install streamlit scikit-learn numpy pandas joblib`")
 
-# --- LOAD ASSETS ---
+# --- 4. SAFE MODEL & ASSET LOADING FUNCTION ---
 @st.cache_resource
-def load_assets():
-    assets = {'model': None, 'scaler': None, 'columns': None, 'errors': []}
+def load_all_assets():
+    """
+    Safely loads all pickle files using joblib with individual try-except blocks.
+    Ensures that a single missing file does not break the entire app.
+    """
+    assets = {
+        'model': None,
+        'scaler': None,
+        'columns': None,
+        'errors': []
+    }
+    
     if not DEPENDENCIES_LOADED:
         return assets
-    
-    for key, filename in [('model', 'model.pkl'), ('scaler', 'scaler.pkl'), ('columns', 'column.pkl')]:
+
+    # Safely load model.pkl
+    try:
+        assets['model'] = joblib.load('model.pkl')
+    except Exception as e:
+        assets['errors'].append(f"Failed to load 'model.pkl': {str(e)}")
+
+    # Safely load scaler.pkl
+    try:
+        assets['scaler'] = joblib.load('scaler.pkl')
+    except Exception as e:
+        assets['errors'].append(f"Failed to load 'scaler.pkl': {str(e)}")
+
+    # Safely load column.pkl / columns.pkl
+    try:
+        assets['columns'] = joblib.load('column.pkl')
+    except Exception as e:
         try:
-            assets[key] = joblib.load(filename)
-        except Exception as e:
-            assets['errors'].append(f"Failed to load '{filename}': {str(e)}")
+            assets['columns'] = joblib.load('columns.pkl')
+        except Exception as inner_e:
+            assets['errors'].append(f"Failed to load 'column.pkl': {str(inner_e)}")
+
     return assets
 
-assets = load_assets()
+assets = load_all_assets()
 
-# Status Banner
-if DEPENDENCIES_LOADED:
-    if assets['model'] is not None and assets['scaler'] is not None:
-        st.success("🚀 **System Ready:** Model and Scaler loaded successfully.")
-    else:
-        st.warning("⚠️ **System Warning:** Model files missing/not found in root folder.")
-        for err in assets['errors']:
-            st.caption(f"• {err}")
-
+# Status Banner Display
 st.markdown("---")
+if DEPENDENCIES_LOADED:
+    if assets['model'] is not None:
+        st.success("🚀 **System Ready:** Classification model and resources loaded successfully.")
+    else:
+        st.warning("⚠️ **Model Loading Warning:** Unable to load all model files from the root directory.")
+        for err_msg in assets['errors']:
+            st.caption(f"• {err_msg}")
+
+# --- 5. INPUT FORM (Guaranteed to Render Always) ---
 st.markdown("### 📊 Enter Transaction Details")
 
-with st.form("fraud_detection_form"):
+with st.form("credit_card_fraud_form"):
     col1, col2 = st.columns(2)
     
     with col1:
-        time_val = st.number_input("Time (Seconds)", min_value=0.0, value=121958.0, step=100.0)
-        v1 = st.number_input("V1", value=-2.289061, format="%.6f")
-        v2 = st.number_input("V2", value=-1.313758, format="%.6f")
-        v3 = st.number_input("V3", value=-0.452562, format="%.6f")
+        time_val = st.number_input(
+            "Transaction Time (Seconds)", 
+            min_value=0.0, 
+            value=121958.0, 
+            step=100.0,
+            help="Elapsed time in seconds since the first recorded transaction"
+        )
+        v1 = st.number_input("V1 Feature", value=-2.289061, format="%.6f")
+        v2 = st.number_input("V2 Feature", value=-1.313758, format="%.6f")
+        v3 = st.number_input("V3 Feature", value=-0.452562, format="%.6f")
 
     with col2:
-        v4 = st.number_input("V4", value=-0.392802, format="%.6f")
-        v5 = st.number_input("V5", value=0.224787, format="%.6f")
-        amount = st.number_input("Transaction Amount ($)", min_value=0.0, value=1600.89, step=10.0)
+        v4 = st.number_input("V4 Feature", value=-0.392802, format="%.6f")
+        v5 = st.number_input("V5 Feature", value=0.224787, format="%.6f")
+        amount = st.number_input(
+            "Transaction Amount ($)", 
+            min_value=0.0, 
+            value=1600.89, 
+            step=10.0,
+            help="Total monetary value of the transaction"
+        )
 
     st.markdown("<br>", unsafe_allow_html=True)
-    submit_btn = st.form_submit_button("🔍 Detect Fraud", type="primary", use_container_width=True)
+    submit_btn = st.form_submit_button("🔍 Detect Fraudulent Activity", type="primary", use_container_width=True)
 
-# --- PREDICTION LOGIC ---
+# --- 6. PREDICTION & INFERENCE EXECUTION ---
 if submit_btn:
+    # Check if dependencies are missing
     if not DEPENDENCIES_LOADED:
-        st.error("❌ Cannot execute: Required python libraries missing.")
+        st.error("❌ Prediction aborted: Required Python libraries are not installed.")
+    # Check if the primary trained model is missing
     elif assets['model'] is None:
-        st.error("❌ Cannot execute: `model.pkl` is missing.")
+        st.error("❌ Prediction aborted: The file `model.pkl` is missing or invalid.")
     else:
         try:
-            raw_inputs = np.array([[time_val, v1, v2, v3, v4, v5, amount]])
+            # 1. Assemble raw input values into array
+            raw_input_data = np.array([[time_val, v1, v2, v3, v4, v5, amount]])
             
-            # Apply scaling if scaler is available
+            # 2. Apply feature scaling if scaler exists
             if assets['scaler'] is not None:
-                features_to_predict = assets['scaler'].transform(raw_inputs)
+                try:
+                    features_for_prediction = assets['scaler'].transform(raw_input_data)
+                except Exception as scale_err:
+                    # Fallback to unscaled input if feature count mismatches
+                    st.warning(f"⚠️ Scaler warning: {str(scale_err)}. Proceeding without scaling.")
+                    features_for_prediction = raw_input_data
             else:
-                features_to_predict = raw_inputs
+                features_for_prediction = raw_input_data
 
-            prediction = assets['model'].predict(features_to_predict)[0]
+            # 3. Predict transaction class
+            prediction_result = assets['model'].predict(features_for_prediction)[0]
             
+            # 4. Render prediction output card
             st.markdown("---")
-            if int(prediction) == 1:
-                st.error("🚨 **ALERT: High Risk!** This transaction is flagged as **FRAUDULENT (Class 1)**.")
+            st.markdown("### 🏆 Prediction Result")
+            
+            if int(prediction_result) == 1:
+                st.error("🚨 **HIGH RISK DETECTED:** This transaction is classified as **FRAUDULENT (Class 1)**.")
             else:
-                st.success("✅ **SAFE:** This transaction appears to be **LEGITIMATE (Class 0)**.")
+                st.success("✅ **SAFE TRANSACTION:** This transaction is classified as **LEGITIMATE (Class 0)**.")
                 
-        except Exception as pred_err:
-            st.error(f"❌ Inference Error: {str(pred_err)}")
+        except Exception as prediction_error:
+            st.error(f"❌ An error occurred during prediction inference: {str(prediction_error)}")
+
+# Footer
+st.markdown("<br><hr>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #888888; font-size: 13px;'>Credit Card Fraud Detection System | Fault-Tolerant Web Pipeline</p>", unsafe_allow_html=True)

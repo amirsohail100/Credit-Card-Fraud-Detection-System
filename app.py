@@ -71,7 +71,7 @@ def load_all_assets():
 
     # Safely load model.pkl
     try:
-        assets['model'] = joblib.load('model.pkl')
+        assets['model'] = joblib.load('final_model.pkl')
     except Exception as e:
         assets['errors'].append(f"Failed to load 'model.pkl': {str(e)}")
 
@@ -83,7 +83,7 @@ def load_all_assets():
 
     # Safely load column.pkl / columns.pkl
     try:
-        assets['columns'] = joblib.load('column.pkl')
+        assets['columns'] = joblib.load('columns.pkl')
     except Exception as e:
         try:
             assets['columns'] = joblib.load('columns.pkl')

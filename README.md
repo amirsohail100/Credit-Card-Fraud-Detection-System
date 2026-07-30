@@ -79,6 +79,14 @@ Multiple classification algorithms were evaluated to handle high variance and an
 ```
 
 ```bash
+git clone https://github.com/amirsohail100/Credit-Card-Fraud-Detection-System.git
+```
+
+```bash
+cd Credit-Card-Fraud-Detection-System
+```
+
+```bash
 streamlit run app.py
 ```
 

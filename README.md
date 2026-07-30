@@ -78,6 +78,10 @@ Multiple classification algorithms were evaluated to handle high variance and an
 └── README.md                           # Project Documentation
 ```
 
+## 📄 License
+
+This project is licensed under the MIT License.
+
 ## 📝 Author
 
 👤 **Amir Sohail**

@@ -79,6 +79,10 @@ Multiple classification algorithms were evaluated to handle high variance and an
 ```
 
 ```bash
+streamlit run app.py
+```
+
+```bash
 python install -r requirements.txt
 ```
 
